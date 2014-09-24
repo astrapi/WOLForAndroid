@@ -17,25 +17,14 @@
         android:layout_marginTop="52dp"
         android:ems="10"
         android:hint="@string/mac_addr_hint" >
-
         <requestFocus />
     </EditText>
-
-    <EditText
-        android:id="@+id/text_ip_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/text_mac_address"
-        android:layout_below="@+id/text_mac_address"
-        android:layout_marginTop="14dp"
-        android:ems="10"
-        android:hint="@string/ip_addr_bc_hint" />
 
     <Button
         android:id="@+id/btn_wake_now"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_ip_address"
+        android:layout_below="@+id/text_mac_address"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="75dp"
         android:text="@string/button_wol" />

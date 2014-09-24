@@ -8,18 +8,23 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="21" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <service android:name="com.cod3scr1b3r.wol.WOLSendService">
+            <intent-filter >
+                <action android:name="com.cod3scr1b3r.wol.action.WAKEUP"/>
+            </intent-filter>
+        </service>
         <activity
             android:name="com.cod3scr1b3r.wol.WOLActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

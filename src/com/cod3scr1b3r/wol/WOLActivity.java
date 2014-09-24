@@ -4,8 +4,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,7 +12,6 @@ import android.widget.TextView;
 public class WOLActivity extends ActionBarActivity {
 
 	private static final String WOL_SHARED_PREFS_FILE = "wol_prefs";
-	private static final String BROADCAST_IP_KEY = "broadcast_ip";
 	private static final String MAC_ADDRESS_KEY = "mac_addr";
 	
 	private TextView mTextViewIpAddress;
@@ -24,7 +21,6 @@ public class WOLActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wol);
-		mTextViewIpAddress = (TextView)findViewById(R.id.text_ip_address);
 		mTextViewMacAddress = (TextView)findViewById(R.id.text_mac_address);
 		Button wolButton = (Button)findViewById(R.id.btn_wake_now);
 		wolButton.setOnClickListener(new View.OnClickListener() {
@@ -48,11 +44,6 @@ public class WOLActivity extends ActionBarActivity {
 	protected void onResume() {
 		super.onResume();
 		SharedPreferences prefs = getSharedPreferences(WOL_SHARED_PREFS_FILE, MODE_PRIVATE);
-		if(prefs.contains(BROADCAST_IP_KEY)){
-			if( mTextViewIpAddress.getText().length() == 0 ){
-				mTextViewIpAddress.setText(prefs.getString(BROADCAST_IP_KEY, null));
-			}
-		}
 		if(prefs.contains(MAC_ADDRESS_KEY)){
 			if( mTextViewMacAddress.getText().length() == 0 ){
 				mTextViewMacAddress.setText(prefs.getString(MAC_ADDRESS_KEY, null));
@@ -64,9 +55,6 @@ public class WOLActivity extends ActionBarActivity {
 	protected void onPause() {
 		super.onPause();
 		Editor prefsEditor = getSharedPreferences(WOL_SHARED_PREFS_FILE, MODE_PRIVATE).edit();
-		if( mTextViewIpAddress.getText().length() != 0 ){
-			prefsEditor.putString(BROADCAST_IP_KEY, mTextViewIpAddress.getText().toString());
-		}
 		if( mTextViewMacAddress.getText().length() != 0 ){
 			prefsEditor.putString(MAC_ADDRESS_KEY, mTextViewMacAddress.getText().toString());
 		}
