@@ -14,7 +14,6 @@ public class WOLActivity extends ActionBarActivity {
 	private static final String WOL_SHARED_PREFS_FILE = "wol_prefs";
 	private static final String MAC_ADDRESS_KEY = "mac_addr";
 	
-	private TextView mTextViewIpAddress;
 	private TextView mTextViewMacAddress;
 	
 	@Override
@@ -31,8 +30,7 @@ public class WOLActivity extends ActionBarActivity {
 					
 					@Override
 					public void run() {
-						WakeOnLanGenerator.WakeNow(mTextViewIpAddress.getText().toString(), 
-								mTextViewMacAddress.getText().toString());
+						WOLSendService.DoWakeUp(WOLActivity.this, mTextViewMacAddress.getText().toString());
 					}
 				}).start();
 				
