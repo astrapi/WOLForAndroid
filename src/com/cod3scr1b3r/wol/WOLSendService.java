@@ -19,7 +19,7 @@ public final class WOLSendService extends IntentService {
 	
 	public static void DoWakeUp(Context context, String macAddress){
 		Intent intent = new Intent(ACTION_WAKE);
-		intent.setClass(context, WOLActivity.class);
+		intent.setClass(context, WOLSendService.class);
 		if( ! TextUtils.isEmpty(macAddress) ){
 			intent.putExtra(PARAM_MAC_ADDR, macAddress);
 			context.startService(intent);

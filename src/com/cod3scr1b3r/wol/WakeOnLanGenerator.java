@@ -36,8 +36,8 @@ public class WakeOnLanGenerator {
 	                System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
 	            }
 	            int bcAddress = getBroadcastAddressDHCP(context);
-	            if( bcAddress > 0 ){
-	            	Log.i(TAG, "Got broadcast address, set to be: " + bcAddress);
+	            if( bcAddress != 0 ){
+	            	Log.i(TAG, String.format("Got broadcast address, set to be: %x",bcAddress));
 		            InetAddress address = intToINetAddress(bcAddress);
 		            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, DEFAULT_PORT);
 		            DatagramSocket socket = new DatagramSocket();
@@ -76,7 +76,7 @@ public class WakeOnLanGenerator {
      * @return
      */
     public static int getBroadcastAddressDHCP(Context context){
-    	int result = -1;
+    	int result = 0;
     	WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
     	DhcpInfo dhcp = wifiManager.getDhcpInfo();
     	if( dhcp.netmask != 0 ){
