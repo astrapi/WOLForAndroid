@@ -1,0 +1,6 @@
+C:\development\workspaces\main\WOLForAndroid\app\build\intermediates\classes\debug
+C:\development\workspaces\main\WOLForAndroid\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.0-0003032010b486b1f0956887801cae92d247b960.jar
+C:\development\workspaces\main\WOLForAndroid\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-e0c2489f4e26270188f48bcc7d0dfb1537ed6291.jar
+C:\development\workspaces\main\WOLForAndroid\app\build\intermediates\pre-dexed\debug\classes-ea965bb56f4b6f7ba87e2e028a9a53a247c65d2f.jar
+C:\development\workspaces\main\WOLForAndroid\app\build\intermediates\pre-dexed\debug\classes-4860d5fd0e10ea8607152b9412049c17e70fb549.jar
+C:\development\workspaces\main\WOLForAndroid\app\build\intermediates\pre-dexed\debug\classes-4441026dfa321faf78b741c835b8182cf1a25702.jar

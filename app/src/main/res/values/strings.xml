@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WOL for android</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="mac_addr_hint">MAC Address</string>
+    <string name="ip_addr_bc_hint">Broadcast IP Address</string>
+    <string name="button_wol">Wake Now!</string>
+
+</resources>
