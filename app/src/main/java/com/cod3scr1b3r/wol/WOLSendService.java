@@ -26,16 +26,12 @@ public final class WOLSendService extends IntentService {
      * @param macAddress
      * @param netIpAddr
      */
-	public static void DoWakeUp(Context context, String macAddress, InetAddress netIpAddr){
+	public static void DoWakeUp(Context context, String[] macAddress, InetAddress netIpAddr){
 		Intent intent = new Intent(ACTION_WAKE);
 		intent.setClass(context, WOLSendService.class);
-		if( ! TextUtils.isEmpty(macAddress) ){
-			intent.putExtra(PARAM_MAC_ADDR, macAddress);
-            intent.putExtra(PARAM_NET_ADDR, netIpAddr);
-			context.startService(intent);
-		}else{
-			Log.e(TAG, "mac address was empty, cannot do WOL");
-		}
+		intent.putExtra(PARAM_MAC_ADDR, macAddress);
+        intent.putExtra(PARAM_NET_ADDR, netIpAddr);
+    	context.startService(intent);
 	}
 	
 	@Override
@@ -52,22 +48,34 @@ public final class WOLSendService extends IntentService {
 	}
 
     private void onWOLRequest(Intent intent) {
-        String macAddress = intent.getStringExtra(PARAM_MAC_ADDR);
-        if( intent.getSerializableExtra(PARAM_NET_ADDR) instanceof InetAddress ) {
-            InetAddress netIpAddr = (InetAddress) intent.getSerializableExtra(PARAM_NET_ADDR);
-            if (TextUtils.isEmpty(macAddress) || netIpAddr != null) {
-                Log.e(TAG, "one of the params was empty, dropping request");
-            } else {
-                try {
-                    WakeOnLanGenerator.WakeNow(this, macAddress, netIpAddr);
-                }catch(Exception e){
-                    Log.e(TAG, "faled to wake device! ");
-                    e.printStackTrace();
+        String[] macAddresses = intent.getStringArrayExtra(PARAM_MAC_ADDR);
+        AppDataStore dataStore = ((WOLApp)getApplication()).getDataStrore();
+        String defaultMac = dataStore.getDefaultMac();
+        if( macAddresses == null && ! TextUtils.isEmpty(defaultMac) ){
+            macAddresses = new String[] { defaultMac };
+            Object temp = intent.getSerializableExtra(PARAM_NET_ADDR);
+            InetAddress netIpAddr = null;
+            InetAddress defaultNetAddress = dataStore.getDefaultNetAddress();
+            if( temp == null && defaultNetAddress != null){
+                netIpAddr = defaultNetAddress;
+            }else if( temp != null && temp instanceof InetAddress){
+                netIpAddr = (InetAddress)temp;
+            }
+            if(  netIpAddr != null ) {
+                int len = macAddresses.length;
+                for(int i = 0; i < len; i++) {
+                    try {
+                        WakeOnLanGenerator.WakeNow(this, macAddresses[i], netIpAddr);
+                    } catch (Exception e) {
+                        Log.e(TAG, "faled to wake device! ");
+                        e.printStackTrace();
+                    }
                 }
+            }else{
+                Log.e(TAG, "could not get default net address and bad net address given as param");
             }
         }else{
-            Log.e(TAG, PARAM_NET_ADDR + "param is NOT InetAddress instance! dropping request");
+            Log.e(TAG, "no mac was given and no default mac exists.");
         }
-
     }
 }

@@ -14,4 +14,8 @@ public class WOLApp extends Application {
         super.onCreate();
         mDataStore = new AppDataStore(this);
     }
+
+    public AppDataStore getDataStrore(){
+        return mDataStore;
+    }
 }
