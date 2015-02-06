@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.cod3scr1b3r.wol.expcetions.MACFormatException;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
@@ -18,8 +17,8 @@ import java.util.regex.Pattern;
  */
 public class NetworkUtils {
 
-    private static final String MAC_ADDRESS_REG_PATTERN = "^[0-9a-fA-F]{2}((:|\\-)[0-9a-fA-F]{2}){5}$";
-    private static final String IP4_REG_PATTERN = "^([0-9]{1,3}\\.){3}[0-9]{1,3}$";
+    public static final String MAC_ADDRESS_REG_PATTERN = "^[0-9a-fA-F]{2}((:|\\-)[0-9a-fA-F]{2}){5}$";
+    public static final String IP4_REG_PATTERN = "^([0-9]{1,3}\\.){3}[0-9]{1,3}$";
     private static  final String TAG = "NET_UTILS";
 
     /**

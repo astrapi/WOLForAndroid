@@ -17,8 +17,7 @@ public final class WOLSendService extends IntentService {
 	public static final String ACTION_WAKE = "com.cod3scr1b3r.wol.action.WAKEUP";
 	public static final String PARAM_MAC_ADDR = "mac_address";
     public static final String PARAM_NET_ADDR = "net_address";
-    public static final String PARAM_SUBNET_MUSK = "subnet_musk";
-	
+
 	private static final String TAG = "WOLSendService";
 
     /**

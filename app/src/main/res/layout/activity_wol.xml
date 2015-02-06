@@ -6,19 +6,36 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/background"
     tools:context="com.cod3scr1b3r.wol.WOLActivity" >
 
     <EditText
         android:id="@+id/text_mac_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="59dp"
+        android:hint= "@string/mac_addr_hint"
+        android:lines="1"
+        android:maxLines="1"
+        android:ems="8"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="52dp"
-        android:ems="10"
-        android:hint="@string/mac_addr_hint" >
+        android:shadowColor="@color/background_floating_material_dark">
         <requestFocus />
     </EditText>
+
+    <EditText
+        android:id="@+id/text_net_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/ip_addr_bc_hint"
+        android:layout_below="@+id/text_mac_address"
+        android:layout_alignLeft="@+id/text_mac_address"
+        android:layout_alignRight="@+id/text_mac_address"
+        android:lines="1"
+        android:maxLines="1"
+        android:inputType="number"
+        android:maxLength="15"/>
 
     <Button
         android:id="@+id/btn_wake_now"

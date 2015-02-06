@@ -7,8 +7,11 @@ import android.app.Application;
  */
 public class WOLApp extends Application {
 
+    private AppDataStore mDataStore;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mDataStore = new AppDataStore(this);
     }
 }
