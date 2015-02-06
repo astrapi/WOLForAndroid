@@ -8,6 +8,10 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.cod3scr1b3r.wol.googleenhanced.MutableInt;
+import com.cod3scr1b3r.wol.googleenhanced.SerializableSparseArray;
+
 import java.util.regex.Pattern;
 
 
@@ -18,53 +22,56 @@ public class WOLActivity extends ActionBarActivity {
         valid, empty, bad_string
     }
 
+    private SerializableSparseArray<TextFieldValidationStatus> mFieldsStat;
+    private MutableInt mNumOfBadFields;
+    private static final String BUNDLE_FIELD_STAT = "field_stat";
+    private static final String BUNDLE_BAD_FIELDS_COUNT = "bad_fields_count";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wol);
 		final EditText textViewMacAddress = (EditText)findViewById(R.id.text_mac_address);
         final EditText textViewNetAddress = (EditText)findViewById(R.id.text_net_address);
+        initFieldsStat(new EditText[]{textViewMacAddress, textViewNetAddress}, savedInstanceState);
         final Button wolButton = (Button)findViewById(R.id.btn_wake_now);
         wolButton.setEnabled(false);
 
-        TextWatcher validationTextWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                TextFieldValidationStatus fieldA = validateNetIpField(textViewMacAddress, NetworkUtils.MAC_ADDRESS_REG_PATTERN);
-                TextFieldValidationStatus fieldB = validateNetIpField(textViewNetAddress, NetworkUtils.IP4_REG_PATTERN);
-                if( fieldA == TextFieldValidationStatus.valid && fieldB == TextFieldValidationStatus.valid){
-                    wolButton.setEnabled(true);
-                }else{
-                    wolButton.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        };
-
-        textViewMacAddress.addTextChangedListener(validationTextWatcher);
-        textViewNetAddress.addTextChangedListener(validationTextWatcher);
-
+        textViewMacAddress.addTextChangedListener( new ValidationTextWatcher(textViewMacAddress.getId(),
+                NetworkUtils.MAC_ADDRESS_REG_PATTERN, wolButton));
+        textViewNetAddress.addTextChangedListener(new ValidationTextWatcher(textViewNetAddress.getId(),
+                NetworkUtils.IP4_REG_PATTERN, wolButton));
 		wolButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-			}
-		});
+            }
+        });
 	}
 
-    private TextFieldValidationStatus validateNetIpField(EditText field, String regexp){
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(BUNDLE_FIELD_STAT, mFieldsStat);
+        outState.putInt(BUNDLE_BAD_FIELDS_COUNT, mNumOfBadFields.value);
+    }
+
+    private void initFieldsStat(EditText[] editTexts, Bundle savedInstanceState){
+        if( savedInstanceState == null ) {
+            int temp =  savedInstanceState.getInt(BUNDLE_BAD_FIELDS_COUNT, editTexts.length);
+            mNumOfBadFields = new MutableInt(temp);
+            mFieldsStat = new SerializableSparseArray<>(editTexts.length);
+            for (int i = 0; i < editTexts.length; i++) {
+                mFieldsStat.put(editTexts[i].getId(), TextFieldValidationStatus.empty);
+            }
+        }else{
+            mFieldsStat = (SerializableSparseArray<TextFieldValidationStatus>)savedInstanceState.getSerializable(BUNDLE_FIELD_STAT);
+        }
+    }
+
+    private TextFieldValidationStatus validateText(String textFromField, String regexp){
         TextFieldValidationStatus status = TextFieldValidationStatus.valid;
-        String text = field != null ? field.getText().toString() : "";
+        String text = textFromField != null ? textFromField : "";
         if( TextUtils.isEmpty(text) ){
             status = TextFieldValidationStatus.empty;
         }else {
@@ -74,6 +81,49 @@ public class WOLActivity extends ActionBarActivity {
         }
         return status;
     }
+
+    private class ValidationTextWatcher implements TextWatcher {
+
+        private int mMyId;
+        private String mRegExpForValidation;
+        private Button mButtonToChange;
+
+        public ValidationTextWatcher(int myEditorId, String regExpValidation,Button buttonToChange){
+            mMyId = myEditorId;
+            mRegExpForValidation = regExpValidation;
+            mButtonToChange = buttonToChange;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String check = s == null ? "" : s.subSequence(start, start + count).toString();
+            TextFieldValidationStatus myPrevStat = mFieldsStat.get(mMyId);
+            TextFieldValidationStatus myCurrentStat = validateText(check, mRegExpForValidation);
+            if( myCurrentStat != myPrevStat){
+                mFieldsStat.put(mMyId, myCurrentStat);
+                if( myPrevStat != TextFieldValidationStatus.valid && myCurrentStat == TextFieldValidationStatus.valid ){
+                    mNumOfBadFields.value--;
+                }else if( myPrevStat == TextFieldValidationStatus.valid && myCurrentStat != TextFieldValidationStatus.valid){
+                    mNumOfBadFields.value++;
+                }
+            }
+            if( mNumOfBadFields.value == 0 ){
+                mButtonToChange.setEnabled(true);
+            }else{
+                mButtonToChange.setEnabled(false);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {
