@@ -3,6 +3,8 @@ package com.cod3scr1b3r.wol;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.EditText;
 import com.cod3scr1b3r.wol.googleenhanced.MutableInt;
 import com.cod3scr1b3r.wol.googleenhanced.SerializableSparseArray;
 
+import java.net.InetAddress;
 import java.util.regex.Pattern;
 
 
@@ -37,19 +40,32 @@ public class WOLActivity extends ActionBarActivity {
         final Button wolButton = (Button)findViewById(R.id.btn_wake_now);
         wolButton.setEnabled(false);
 
-        textViewMacAddress.addTextChangedListener( new ValidationTextWatcher(textViewMacAddress.getId(),
-                NetworkUtils.MAC_ADDRESS_REG_PATTERN, wolButton));
+        textViewMacAddress.addTextChangedListener(new ValidationTextWatcher(textViewMacAddress.getId(),
+				NetworkUtils.MAC_ADDRESS_REG_PATTERN, wolButton));
+		textViewNetAddress.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         textViewNetAddress.addTextChangedListener(new ValidationTextWatcher(textViewNetAddress.getId(),
                 NetworkUtils.IP4_REG_PATTERN, wolButton));
 		wolButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+				String macStr = textViewMacAddress.getText().toString();
+				String ipStr = textViewNetAddress.getText().toString();
+				InetAddress ip = NetworkUtils.ip4String2Inet(ipStr);
+				WOLSendService.DoWakeUp(getBaseContext(), new String[]{ macStr },ip);
+				((WOLApp)getApplication()).getDataStrore().setLastUsedMac(macStr);
+				((WOLApp)getApplication()).getDataStrore().setLastUsedNetAddress(ip);
             }
         });
+
+		InetAddress ip = ((WOLApp)getApplication()).getDataStrore().getLastUsedNetAddress();
+		if( ip != null ){
+			textViewNetAddress.setText(ip.toString());
+		}
+		textViewMacAddress.setText( ((WOLApp)getApplication()).getDataStrore().getLastUsedMac());
 	}
 
-    @Override
+
+	@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(BUNDLE_FIELD_STAT, mFieldsStat);
@@ -58,14 +74,15 @@ public class WOLActivity extends ActionBarActivity {
 
     private void initFieldsStat(EditText[] editTexts, Bundle savedInstanceState){
         if( savedInstanceState == null ) {
-            int temp =  savedInstanceState.getInt(BUNDLE_BAD_FIELDS_COUNT, editTexts.length);
-            mNumOfBadFields = new MutableInt(temp);
+			mNumOfBadFields = new MutableInt(editTexts.length);
             mFieldsStat = new SerializableSparseArray<>(editTexts.length);
             for (int i = 0; i < editTexts.length; i++) {
                 mFieldsStat.put(editTexts[i].getId(), TextFieldValidationStatus.empty);
             }
         }else{
             mFieldsStat = (SerializableSparseArray<TextFieldValidationStatus>)savedInstanceState.getSerializable(BUNDLE_FIELD_STAT);
+			int temp = savedInstanceState.getInt(BUNDLE_BAD_FIELDS_COUNT, editTexts.length);
+			mNumOfBadFields = new MutableInt(temp);
         }
     }
 

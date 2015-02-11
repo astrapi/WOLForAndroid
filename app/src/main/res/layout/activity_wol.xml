@@ -34,7 +34,6 @@
         android:layout_alignRight="@+id/text_mac_address"
         android:lines="1"
         android:maxLines="1"
-        android:inputType="number"
         android:maxLength="15"/>
 
     <Button
